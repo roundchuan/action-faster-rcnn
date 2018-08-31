@@ -44,7 +44,7 @@ def pred_to_array(pred):
                     res.append(ires)
     return np.array(res)
 
-def detect_action_img(net, im_file, CONF_THRESH = 0, LEN = 1, NMS_THRESH = 0.3):
+def detect_action_img(net, im_file, CONF_THRESH = 0, LEN = 1, NMS_THRESH = 0.3):#得到最后的21个proposals
     """Detect object classes in an image using pre-computed object proposals. 
     return finaldets: dict of class index
     """ 
@@ -68,6 +68,16 @@ def detect_action_img(net, im_file, CONF_THRESH = 0, LEN = 1, NMS_THRESH = 0.3):
                 im = np.zeros((im_1.shape[0], im_1.shape[1], im_1.shape[2]*LEN), dtype=np.float32)
             im[:,:,j*3:(j+1)*3] = im_1
     scores, boxes = im_detect(net, im)
+    """Detect object classes in an image given object proposals.
+    Arguments:  R image 数目  K class数目 + 1
+        net (caffe.Net): Fast R-CNN network to use
+        im (ndarray): color image to test (in BGR order)
+        boxes (ndarray): R x 4 array of object proposals or None (for RPN)
+    Returns:
+        scores (ndarray): R x K array of object class scores (K includes
+            background as object category 0)
+        boxes (ndarray): R x (4*K) array of predicted bounding boxes
+    """
     print ('{}, Detection for {:d} object proposals').format(im_file,boxes.shape[0])
     finaldets = {}
     num_cls = scores.shape[1] # including bkg
